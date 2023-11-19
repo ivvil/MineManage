@@ -7,7 +7,8 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ea72743c-3cca-4786-a027-aebf99acf124" name="Changes" comment="Reorganize project">
+    <list default="true" id="ea72743c-3cca-4786-a027-aebf99acf124" name="Changes" comment="Update gitignore">
+      <change afterPath="$PROJECT_DIR$/src/downloader.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
@@ -17,6 +18,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -45,10 +53,16 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\losea\RustroverProjects\MineManage\test" />
+      <recent name="C:\Users\losea\RustroverProjects\MineManage" />
+    </key>
+  </component>
   <component name="RsExternalLinterProjectSettings">
     <option name="channel" value="beta" />
   </component>
@@ -72,7 +86,7 @@
     </configuration>
   </component>
   <component name="RustProjectSettings">
-    <option name="toolchainHomeDirectory" value="/run/current-system/sw/bin" />
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
   </component>
   <component name="SpaceReviewFiltersPersistance">{
   &quot;lastFilter&quot;: {
@@ -105,6 +119,10 @@
       <workItem from="1700049567961" duration="778000" />
       <workItem from="1700050528070" duration="153000" />
       <workItem from="1700050815175" duration="2271000" />
+      <workItem from="1700070966579" duration="39000" />
+      <workItem from="1700419207423" duration="79000" />
+      <workItem from="1700419359359" duration="160000" />
+      <workItem from="1700419547635" duration="1406000" />
     </task>
     <task id="LOCAL-00001" summary="Reorganize project">
       <option name="closed" value="true" />
