@@ -12,15 +12,16 @@ mod downloader;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
-    version: u8,
+    version : String,
     java_location : String,
     bin_location : String,
     bin_name : String,
+    custom_jvm_arguments : String,
 }
 
 /// `MyConfig` implements `Default`
-impl ::std::default::Default for Config {
-    fn default() -> Self { Self { version: 0, java_location: "java".into(), bin_location: "".into(), bin_name: "".into()} }
+impl Default for Config {
+    fn default() -> Self { Self { version: "0.1.0".parse().unwrap(), java_location: "java".into(), bin_location: "".into(), bin_name: "".into(), custom_jvm_arguments: "".into()} }
 }
 
 fn main() -> Result<(), confy::ConfyError> {
@@ -112,14 +113,16 @@ fn main() -> Result<(), confy::ConfyError> {
             }
             // start the instance
 
-            let cfg: Config = confy::load("MineManage", format!("instances/{}/config.toml", args[2]).as_str()).expect("TODO: panic message"); // Load config
+            let cfg: Config = confy::load("mine-manage",format!("instances/{}/config.toml", args[2]).as_str()).expect("TODO: panic message"); // Load config
 
-            let process = Command::new(cfg.java_location)
-                .args(["-jar", [cfg.bin_location, cfg.bin_name].join("").as_str()]) // Pass as arguments -jar and the global location of the binary
-                .stdin(Stdio::inherit())
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("java has failed");
+            let process = create_child_process(&*cfg.java_location, &["-jar", [cfg.bin_location, cfg.bin_name].join("").as_str()]);
+
+/*            /*let mut stdin = process.stdin.take().expect("Failed to open stdin");*/
+            let stdout = process.wait_with_output().expect("Failed to read stdout");
+
+
+            print!("{}", String::from_utf8_lossy(&stdout.stdout));*/
+
         },
         "-S" | "--stop" => {
             // Check if there are enough args
@@ -229,35 +232,18 @@ fn main() -> Result<(), confy::ConfyError> {
         }
     }
 
-
-
-    let cfg: Config = confy::load("MineManage", "config.toml")?; // Load config
-
-    println!("{:?}", cfg);
-
-    let process = create_child_process(cfg.java_location, &["-jar", [cfg.bin_location, cfg.bin_name].join("").as_str()]);
-
-    /*let mut stdin = process.stdin.take().expect("Failed to open stdin");*/
-    let stdout = process.wait_with_output().expect("Failed to read stdout");
-
-
-    print!("{}", String::from_utf8_lossy(&stdout.stdout));
-
-
     Ok(())
 }
 
-fn create_child_process(bin : String, bin_args: &[&str]) -> Child {
+fn create_child_process(bin : &str, bin_args: &[&str]) -> Child {
     let mut process = Command::new(bin)
         .args(bin_args) // Pass as arguments -jar and the global location of the binary
         .stdin(Stdio::inherit())
         .stdout(Stdio::piped())
         .spawn()
-        .expect("java has failed");
+        .expect(&*[ bin, "has failed"].join("").to_string());
     process
 }
-
-
 #[cfg(test)]
 mod tests {
     use std::path;
