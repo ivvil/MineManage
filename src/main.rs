@@ -1,5 +1,5 @@
 use std::process::{Child, Command, Stdio};
-use std::io::{self, Write};
+use std::io::Write;
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -28,7 +28,7 @@ fn main() -> Result<(), confy::ConfyError> {
     // Get cli args
     let args: Vec<String> = env::args().collect();
 
-    let main_folder = "~/.minemanager/";
+    let main_folder = "~/.config/mine-manager";
 
     // Check if the main folder exists
     if !path::Path::new(main_folder).exists() {
@@ -47,7 +47,8 @@ fn main() -> Result<(), confy::ConfyError> {
         println!("Commands:");
         println!("    -i --install [instance name] [resource_type] [version] - Install a minecraft server");
         println!("    -s --start [instance name] - Start a minecraft server");
-        println!("    -S --stop [instance name]- Stop a minecraft server");
+        println!("    -S --stop [instance name] - Stop a minecraft server");
+        println!("    -c --connect [instance name] - Connect to a running instance");
         println!("    -r --restart [instance name] - Restart a minecraft server");
         println!("    -k --kill [instance name] - Kill a minecraft server");
         println!("    -u --update [instance name] - Update a minecraft server");
@@ -113,9 +114,9 @@ fn main() -> Result<(), confy::ConfyError> {
             }
             // start the instance
 
-            let cfg: Config = confy::load("mine-manage",format!("instances/{}/config.toml", args[2]).as_str()).expect("TODO: panic message"); // Load config
+            // let cfg: Config = confy::load("mine-manage",format!("instances/{}/config.toml", args[2]).as_str()).expect("Runtime Error panic message"); // Load config
 
-            let process = create_child_process(&*cfg.java_location, &["-jar", [cfg.bin_location, cfg.bin_name].join("").as_str()]);
+            // let process = create_child_process(&*cfg.java_location, &["-jar", [cfg.bin_location, cfg.bin_name].join("").as_str()]);
 
 /*            /*let mut stdin = process.stdin.take().expect("Failed to open stdin");*/
             let stdout = process.wait_with_output().expect("Failed to read stdout");
@@ -224,6 +225,22 @@ fn main() -> Result<(), confy::ConfyError> {
             println!("    -u --update [instance name] - Update a minecraft server");
             println!("    -l --list - List all minecraft servers");
             println!("    -h --help - Print this help message");
+
+        },
+
+        "-c" | "--connect" => {
+            if args.len() < 3 {
+                println!("Not enough arguments");
+                return Ok(());
+            }
+            // Check if the instance exists
+            if !path::Path::new(&format!("instances/{}", args[2])).exists() {
+                println!("Instance does not exist");
+                return Ok(());
+            }
+
+
+
 
         },
         _ => {
