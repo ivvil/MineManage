@@ -7,21 +7,49 @@ use std::path;
 use std::string::String;
 use serde::{Serialize, Deserialize};
 use confy;
+use crate::utils::VERSION;
 
 mod downloader;
+mod child_process;
+mod daemon;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Config {
-    version : String,
-    java_location : String,
-    bin_location : String,
-    bin_name : String,
-    custom_jvm_arguments : String,
-}
+mod utils {
+    use std::fs;
+    use std::path::{Path, PathBuf};
+    use confy::get_configuration_file_path;
 
-/// `MyConfig` implements `Default`
-impl Default for Config {
-    fn default() -> Self { Self { version: "0.1.0".parse().unwrap(), java_location: "java".into(), bin_location: "".into(), bin_name: "".into(), custom_jvm_arguments: "".into()} }
+    pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+    pub const NAME: &str = env!("CARGO_PKG_NAME");
+    pub const CONFIG_NAME: &str = "config.toml";
+    pub const INSTANCES_DIRECTORY: PathBuf = get_configuration_file_path(super::utils::VERSION, super::utils::CONFIG_NAME).unwrap_or_else(|_| std::env::current_dir().unwrap());
+
+    pub fn get_subdirectories(directory: impl AsRef<Path>) -> Vec<PathBuf> {
+        let path = directory.as_ref();
+
+        // Read the contents of the directory
+        if let Ok(entries) = fs::read_dir(path) {
+            // Filter entries to include only subdirectories
+            let subdirectories: Vec<PathBuf> = entries
+                .filter_map(|entry| {
+                    if let Ok(entry) = entry {
+                        if entry.path().is_dir() {
+                            Some(entry.path())
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+
+            subdirectories
+        } else {
+            Vec::new()
+        }
+    }
+
+
 }
 
 fn main() -> Result<(), confy::ConfyError> {
@@ -36,13 +64,13 @@ fn main() -> Result<(), confy::ConfyError> {
         fs::create_dir(main_folder).expect("TODO: panic message");
     }
 
-    let version = "0.1.0";
+
 
     // Check if there are any args
 
     if args.is_empty() {
         // If there are no args, print help
-        println!("MineManage v{}", version);
+        println!("MineManage v{}", VERSION);
         println!("Usage: mm [command] [args]");
         println!("Commands:");
         println!("    -i --install [instance name] [resource_type] [version] - Install a minecraft server");
@@ -82,7 +110,8 @@ fn main() -> Result<(), confy::ConfyError> {
                         println!("Instance already exists");
                         return Ok(());
                     }
-                    // Create the instance folder
+                    // Create the instance folde1
+
                     fs::create_dir(&format!("{}/instances/{}", main_folder, args[2])).expect("TODO: panic message");
                     // Download the server jar
                     downloader::get_version(args[3].as_str(), args[4].as_str()).expect("TODO: panic message");
@@ -113,8 +142,6 @@ fn main() -> Result<(), confy::ConfyError> {
                 return Ok(());
             }
             // start the instance
-
-            // let cfg: Config = confy::load("mine-manage",format!("instances/{}/config.toml", args[2]).as_str()).expect("Runtime Error panic message"); // Load config
 
             // let process = create_child_process(&*cfg.java_location, &["-jar", [cfg.bin_location, cfg.bin_name].join("").as_str()]);
 
@@ -214,7 +241,7 @@ fn main() -> Result<(), confy::ConfyError> {
                 return Ok(());
             }
             // print help
-            println!("MineManage v{}", version);
+            println!("MineManage v{}", VERSION);
             println!("Usage: mm [command] [args]");
             println!("Commands:");
             println!("    -i --install [instance name] [resource_type] [version] - Install a minecraft server");
@@ -250,16 +277,6 @@ fn main() -> Result<(), confy::ConfyError> {
     }
 
     Ok(())
-}
-
-fn create_child_process(bin : &str, bin_args: &[&str]) -> Child {
-    let mut process = Command::new(bin)
-        .args(bin_args) // Pass as arguments -jar and the global location of the binary
-        .stdin(Stdio::inherit())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect(&*[ bin, "has failed"].join("").to_string());
-    process
 }
 #[cfg(test)]
 mod tests {
